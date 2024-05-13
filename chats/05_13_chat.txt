@@ -1,0 +1,217 @@
+09:48:35	 From Rik Bauwens : I’m going for the medium-pain with typescript
+10:17:33	 From Rohith B : Cpython?
+10:38:20	 From David Beazley : I am going to do all of my work in the "wab" directory of the project.
+10:39:02	 From David Beazley : This directory is basically empty except for a few miscellaneous helper files (for later) and some test input programs (also for later).
+10:40:24	 From David Beazley : Most of this first part should be spent reading/thinking.  Maybe a bit of setup. But not much coding.
+10:40:34	 From David Beazley : There can be some coding.
+10:57:05	 From David Beazley : There is a certain organizational challenge in this first part that might take some time to work out depending on the programming language that you are using.
+11:03:07	 From dustin (he/him) : I think figuring out a decent way of writing these data structures is as challenging as figuring out how to print them!
+11:04:18	 From David Beazley : Replying to "I think figuring out..."
+
+This will be especially true in any compiled language like Rust, C++, etc.
+11:05:48	 From David Beazley : Replying to "I think figuring out..."
+
+Part of me wonders if I should attempt this in C++.
+11:05:59	 From Brian Victor : If it’s not premature to ask about the spec, section 7 says that a relation or boolean has to follow `if`, but section 3 says there are no booleans, only ints. Section 7 also says that single values after `if` are invalid, which I’m gathering means that expressions are also invalid there, and it actually can only be a relation?
+11:06:26	 From David Beazley : Replying to "If it’s not prematur..."
+
+It can only be a relation.
+11:06:31	 From Brian Victor : Reacted to "It can only be a rel..." with 👍
+11:06:44	 From David Beazley : Replying to "If it’s not prematur..."
+
+So `if a < b { ... }` is  good.   Something like `if a { ... }` is bad.
+11:12:48	 From Rik Bauwens : It looks like var x = (((1))) is a valid program according to the spec. When parsing it into an AST, should these parentheses be preserved? It feels like they shouldn’t, and the formatter should output var x = 1?
+11:13:59	 From David Beazley : Replying to "It looks like var x ..."
+
+var x = (((1)))); is definitely valid.  As is `var x = 1 + 2;`.
+11:14:45	 From David Beazley : Replying to "It looks like var x ..."
+
+If you wanted to preserve the parens in some way, you definitely need to make something that represents them.
+11:14:50	 From ben z : Replying to "It looks like var x ..."
+
+I was just thinking of this w.r.t. the final line of the first snippet. The tree is unambiguous so I don’t feel like the parens end up in the model itself, so you can’t really spit them back out. If you want to be able to do that you need to carry around some extra stuff I think?
+11:15:14	 From dustin (he/him) : Replying to "It looks like var x ..."
+
+OTOH omitting them means that your printer needs to "know" when they are required
+11:15:49	 From David Beazley : Replying to "It looks like var x ..."
+
+Oh.  That's true.
+11:15:54	 From ben z : Replying to "It looks like var x ..."
+
+Yes, or emit them always for all auch expressions
+11:18:00	 From Rik Bauwens : Replying to "It looks like var x ..."
+
+Out of interest, I checked the Python AST, which doesn’t keep the parentheses. Indeed, the formatter needs to insert them then, which complicates it, but it feels like that’s its job
+11:19:01	 From David Beazley : Replying to "It looks like var x ..."
+
+Python doesn't keep the parens?  Interesting.
+11:19:05	 From ben z : Reacted to "Out of interest, I c..." with 👍
+11:36:10	 From David Beazley : Coming back in a minute.
+11:36:51	 From Aditya : Reacted to "Coming back in a min..." with 👍
+11:38:10	 From ben z : My first instinct for formatting is to hang a “format” method off of every model object, which is not the suggested structure here. Why not? One reason is that it means you end up passing around indentation levels there which is maybe not optimal.
+11:47:07	 From dustin (he/him) : I'll look up the "God Class" pattern in GoF :)
+11:57:53	 From David Beazley : I am very much a proponent of trying to keep things "small" with respect to data.
+11:58:09	 From David Beazley : Meaning: Data structures are data structures and that's it.
+12:00:48	 From David Beazley : There are some "OO" ways to handle the data manipulation (such as the formatting).    One approach would be the "visitor pattern".    I will  talk about that a bit later.
+12:01:05	 From David Beazley : Pattern matching can also be a useful technique.
+12:01:09	 From Akash Panda : Replying to "There are some "OO" ..."
+
+Also something like traits in Rust
+12:10:27	 From David Beazley : https://github.com/dabeaz-course/compilers_2024_05/discussions/2
+12:19:14	 From Akash Panda : Is `var x` a valid statement? I.e not assigning anything to it
+12:19:29	 From David Beazley : Replying to "Is `var x` a valid s..."
+
+No. Not in Wab.
+12:19:37	 From Akash Panda : Reacted to "No. Not in Wab." with 👍
+12:21:03	 From Brian Victor : I’m noticing that the test programs don’t involve more than one level of nesting. Should we be thinking about accounting for that?
+12:22:19	 From dustin (he/him) : Most of this first part should be spent reading/thinking.  Maybe a bit of setup. But not much coding.
+Was that "first hour" or "Project 1" b/c I've written a LOT of code
+12:22:45	 From David Beazley : https://github.com/dabeaz-course/compilers_2024_05/discussions/3
+12:23:20	 From David Beazley : Replying to "Most of this first p..."
+
+They may be "a lot" code, but maybe not a lot of forward progress if that code is primary related to overall setup.
+12:23:37	 From David Beazley : Replying to "I’m noticing that th..."
+
+Yes.
+12:28:22	 From Gaurav Garg : Have you modelled name class as sub-class of Statement or Expression? It should be an expression, right?
+12:29:03	 From David Beazley : Replying to "Have you modelled na..."
+
+I have `Name` defined as an `Expression` because it can appear in expressions.  For example in `2 + x`.
+12:29:13	 From Gaurav Garg : Replying to "Have you modelled na..."
+
+Thanks
+12:29:44	 From David Beazley : Replying to "Have you modelled na..."
+
+But I am somewhat inconsistent overall.  In variables, I have the name on the left as a bare string.
+12:41:05	 From dustin (he/him) : Huh, Rust's std::fmt::Debug appears to support indentation and pretty-printing, but it's not exposed outside the std lib :(
+12:44:10	 From David Beazley : https://github.com/dabeaz-course/compilers_2024_05/discussions/5
+12:55:54	 From David Beazley : Will come back in a few minutes just to say a few things before the break.
+12:59:26	 From Brian Victor : js has destructuring. does that count?
+13:00:00	 From dustin (he/him) : How much does it matter what it "means" at this point?
+13:03:56	 From ben z : Instead of “name” does the word “symbol” make sense here, or is that a term of art for something more sophisticated/later?
+13:07:41	 From dustin (he/him) : Especially horrible stuff in C++!
+13:09:23	 From dustin (he/him) : hey now
+14:12:57	 From dustin (he/him) : I've heard of these "kids"
+14:16:42	 From Aditya Gandhi : Naa
+14:17:20	 From Akash Panda : That must be painful
+14:18:29	 From Aditya Gandhi : Yes
+14:18:31	 From dustin (he/him) : I have!
+14:18:58	 From Aditya Gandhi : Someone mentioned passing around "indent  levels"
+14:21:28	 From dustin (he/him) : I think I just finished?
+14:21:34	 From Rik Bauwens : Almost done
+14:21:37	 From dustin (he/him) : I mean it's all bugs
+14:21:38	 From Akash Panda : Program 3
+14:21:42	 From Vikram Hegde : finished
+14:21:48	 From Gaurav Garg : Program 3
+14:21:48	 From Aditya Gandhi : Program 3
+14:21:50	 From jmlago : finishing 2
+14:22:14	 From Nebiyu Feleke (Nebe) : On program 2
+14:25:34	 From David Beazley : I'm going to start making some changes to "simplify" and better organized my code.
+14:25:51	 From David Beazley : Replying to "I'm going to start m..."
+
+Especially around expressions and operators.
+14:39:34	 From Akash Panda : I’ve been formatting the BinOp expressions with parentheses. Are we supposed to not put parentheses when it is not necessary?
+14:40:18	 From David Beazley : Replying to "I’ve been formatting..."
+
+I'm ok to put parenthesis in there.
+14:40:24	 From Akash Panda : Reacted to "I'm ok to put parent..." with 👍
+14:42:07	 From dustin (he/him) : Thinking about AST transformations, will we want some kind of generic "find every location matching this pattern" thing?
+14:43:26	 From David Beazley : Replying to "Thinking about AST t..."
+
+Don't know.   I just know you need to take one AST and transform it into a new AST where some change has been made.
+15:04:14	 From Rik Bauwens : Added a topic to discuss code duplication in this part of the project: https://github.com/dabeaz-course/compilers_2024_05/discussions/9
+15:20:54	 From Gaurav Garg : https://github.com/dabeaz-course/compilers_2024_05/discussions/10Can someone help with this discussion please?
+15:25:52	 From jmlago : I'm having a bit of trouble with inline comments, how are you guys handling that?
+15:26:11	 From David Beazley : Replying to "I'm having a bit of ..."
+
+I am completely ignoring comments
+15:26:48	 From jmlago : Se ha reaccionado a "I am completely ig..." con 👍
+15:26:50	 From David Beazley : Replying to "I'm having a bit of ..."
+
+There is a deeper design issue around this though.   Are comments part of the AST or not?
+15:27:28	 From David Beazley : Replying to "I'm having a bit of ..."
+
+They have no relevance to code that might get emitted for a CPU.  But, they might have relevance if you were writing a code formatter or some other code manipulation tool.
+15:27:32	 From Aditya Gandhi : Replying to "I'm having a bit of ..."
+
+I don't think so, they don't affect the outcome of the code
+15:27:55	 From jmlago : Respondiendo a "I'm having a bit o..."
+
+is true that by definition they don't really affect the code... but yes in the formatter was the issue... lol
+15:40:35	 From dustin (he/him) : Functions aren't first-class here, right? `(f+1)(2, 3)` is not valid
+15:41:06	 From David Beazley : Replying to "Functions aren't fir..."
+
+That is correct.
+15:42:46	 From David Beazley : Replying to "In looking at what D..."
+
+Mine is broken on that right now.
+15:42:50	 From ben z : Reacted to "Mine is broken on th..." with 👍
+15:43:03	 From David Beazley : Replying to "In looking at what D..."
+
+(partly because I wanted to see if anyone noticed it)
+15:43:11	 From ben z : Replying to "In looking at what D..."
+
+Shit! sorry
+15:43:22	 From David Beazley : Ha! No worries.  It's  good!
+15:43:54	 From David Beazley : This constant folding thing is weird.  You've basically  got to rebuild the whole AST from the ground up looking for a very specific replacement pattern.
+15:44:18	 From David Beazley : But, it means you've got to descend down into everything.
+15:45:48	 From ben z : And recreate each objects; I am a little fuzzy on the python lifecycle management as we may require it eventually, although I supposed if the nodes are immutable in practice it doesn’t matter
+15:47:55	 From ben z : (Seems more of a thing with de-initialization pass)
+15:48:36	 From David Beazley : There are a lot of "wild" things going on with this.
+15:53:21	 From Vikram Hegde : done
+15:53:25	 From Gaurav Garg : No progress with Project 2: Program 1
+15:53:42	 From Akash Panda : Finishing up folding
+16:03:03	 From Akash Panda : Already hate it
+16:03:08	 From ben z : Reacted to "Already hate it" with 😂
+16:07:39	 From Aditya Gandhi : I would imagine that the visitor pattern also lets you dynamically inject different "behaviors"
+16:08:07	 From Aditya Gandhi : Either at runtime or compile time as long as the contract is maintained
+16:08:47	 From Aditya Gandhi : Probably great for stuff like localization
+16:12:07	 From Brian Victor : I’ve been doing this with python’s pattern matching. it’s been really nice!
+16:27:20	 From David Beazley : Unless you're programmig in C++ or Java, I might steer clear of the visitor pattern.
+16:28:47	 From David Beazley : Replying to "Unless you're progra..."
+
+I'm not necessarily opposed to it in Python, but pattern matching offers some more powerful features that may be useful here.
+16:31:30	 From Vikram Hegde : compile is python built-in, so I guess it is better to use something else
+16:41:36	 From Aditya Gandhi : Replying to "Unless you're progra..."
+
+I've seen it in used in some popular SDKs, including the new Java AWS SDKs
+16:42:29	 From Aditya Gandhi : Replying to "Unless you're progra..."
+
+https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/core/document/DocumentVisitor.html
+16:42:39	 From Aditya Gandhi : Replying to "Unless you're progra..."
+
+Among others
+16:44:00	 From David Beazley : Replying to "Unless you're progra..."
+
+It's definitely used!
+16:51:07	 From Aditya Gandhi : Ok why is var y = 2 + x; worse than var y;y = 2 + x;
+16:51:30	 From Aditya Gandhi : Where's the redundancy and what did we simplify?
+16:54:01	 From David Beazley : Replying to "Where's the redundan..."
+
+Some discussion at: https://github.com/dabeaz-course/compilers_2024_05/discussions/8
+16:55:28	 From Aditya Gandhi : Reacted to "Some discussion at: ..." with 👍
+16:55:32	 From David Beazley : Replying to "Where's the redundan..."
+
+There is a redundancy in programming language features.  `var y = 2 + x;` and `y = 2 + x;` are almost identical to each other.   I don't want two almost identical features.   I want one feature.
+17:11:27	 From dustin (he/him) : To my earlier question, I've added a "walk" trait which can just walk over (but not modify) an AST. That makes it pretty easy to build assertions like "contains no initializer-free declarations"
+17:12:16	 From David Beazley : Reacted to "To my earlier questi..." with 👍
+17:14:17	 From dustin (he/him) : Also, rather than have the visit to the declaration able to return multiple statements, I was going to look through a block for declarations and replace them with a declaration followed by an assignment.
+17:15:50	 From jmlago : Se ha reaccionado a "To my earlier ques..." con 👍
+17:17:21	 From David Beazley : Replying to "Also, rather than ha..."
+
+I feel like there is a bit of design issue concerning statements.   Can one statement be replaced by multiple statements?  If so, what does that look like?
+17:18:12	 From Vikram Hegde : Replying to "Also, rather than ha..."
+
+output.extend() instead of output.append()
+17:18:25	 From David Beazley : Replying to "Also, rather than ha..."
+
+I suppose you could just make a special "statement" that contains multiple statements.
+17:18:48	 From David Beazley : Replying to "Also, rather than ha..."
+
+But, is that different than a list of statements?
+17:30:06	 From dustin (he/him) : Replying to "Also, rather than ha..."
+
+Yeah, I'm using flat-map, but basically `output.extend()`
+17:30:23	 From dustin (he/him) : Replying to "Also, rather than ha..."
+
+I think the avantage is that the remaining block is still a sequence of statements, rather than a "tree" of statements..

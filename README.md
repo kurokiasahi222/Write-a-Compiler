@@ -135,4 +135,11 @@ directory.
 
 Videos from the live sessions will be posted here.
 
+**Day 1**
+
+* [Morning](https://vimeo.com/945986973/cf55e9bb28)
+* [Afternoon](https://vimeo.com/945986973/cf55e9bb28)
+* [Chat](chats/05_13_chat.txt)
+
+
 

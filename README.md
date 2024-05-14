@@ -138,7 +138,7 @@ Videos from the live sessions will be posted here.
 **Day 1**
 
 * [Morning](https://vimeo.com/945986973/cf55e9bb28)
-* [Afternoon](https://vimeo.com/945986973/cf55e9bb28)
+* [Afternoon](https://vimeo.com/945988004/cadff2b70a)
 * [Chat](chats/05_13_chat.txt)
 
 
